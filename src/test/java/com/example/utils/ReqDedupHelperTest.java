@@ -79,33 +79,33 @@ class ReqDedupHelperTest {
      * @Author: xrwang8
      * @Date: 2020/12/18
      */
-    @Test
-    void repeatRequest() throws IOException {
-        //模拟用户id
-        String userId = "12345678";
-        //模拟测试的请求接口
-        String method = "pay";
-        String dedupMD5 = "C2A36FED15128E9E878583CAAAFEFDE9";
-        String KEY = "dedup:U=" + userId + "M=" + method + "P=" + dedupMD5;
-        // 1000毫秒过期，1000ms内的重复请求会认为重复
-        long expireTime = 1000;
-        long expireAt = System.currentTimeMillis() + expireTime;
-        String val = "expireAt@" + expireAt;
-        // NOTE:直接SETNX不支持带过期时间，所以设置+过期不是原子操作，极端情况下可能设置了就不过期了，后面相同请求可能会误以为需要去重，所以这里使用底层API，保证SETNX+过期时间是原子操作
-        Boolean firstSet = StringRedisTemplate.execute((RedisCallback<Boolean>) connection -> connection
-                .set(KEY.getBytes(), val.getBytes(), Expiration.milliseconds(expireTime),
-                        RedisStringCommands.SetOption.SET_IF_ABSENT));
-
-
-        final boolean isConsiderDup;
-        if (firstSet != null && firstSet) {
-            isConsiderDup = false;
-        } else {
-            isConsiderDup = true;
-        }
-
-
-    }
+//    @Test
+//    void repeatRequest() throws IOException {
+//        //模拟用户id
+//        String userId = "12345678";
+//        //模拟测试的请求接口
+//        String method = "pay";
+//        String dedupMD5 = "C2A36FED15128E9E878583CAAAFEFDE9";
+//        String KEY = "dedup:U=" + userId + "M=" + method + "P=" + dedupMD5;
+//        // 1000毫秒过期，1000ms内的重复请求会认为重复
+//        long expireTime = 1000;
+//        long expireAt = System.currentTimeMillis() + expireTime;
+//        String val = "expireAt@" + expireAt;
+//        // NOTE:直接SETNX不支持带过期时间，所以设置+过期不是原子操作，极端情况下可能设置了就不过期了，后面相同请求可能会误以为需要去重，所以这里使用底层API，保证SETNX+过期时间是原子操作
+//        Boolean firstSet = StringRedisTemplate.execute((RedisCallback<Boolean>) connection -> connection
+//                .set(KEY.getBytes(), val.getBytes(), Expiration.milliseconds(expireTime),
+//                        RedisStringCommands.SetOption.SET_IF_ABSENT));
+//
+//
+//        final boolean isConsiderDup;
+//        if (firstSet != null && firstSet) {
+//            isConsiderDup = false;
+//        } else {
+//            isConsiderDup = true;
+//        }
+//
+//
+//    }
 
 
 }
