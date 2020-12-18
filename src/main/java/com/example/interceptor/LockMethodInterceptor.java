@@ -1,11 +1,12 @@
-package com.example.aop;
+package com.example.interceptor;
 
-import com.example.config.RedisLockHelper;
-import com.example.servcie.CacheKeyGenerator;
-import lombok.RequiredArgsConstructor;
+import com.example.annotation.CacheLock;
+import com.example.utils.RedisLockHelper;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -22,13 +23,19 @@ import java.util.UUID;
  * @author: xrwang8
  * @create: 2020-12-18 10:33
  **/
-@RequiredArgsConstructor
+@Aspect
+@Configuration
 public class LockMethodInterceptor {
 
     private final RedisLockHelper redisLockHelper;
     private final CacheKeyGenerator cacheKeyGenerator;
 
-    @Around("execution(public * *(..)) && @annotation(com.example.aop.CacheLock)")
+    public LockMethodInterceptor(RedisLockHelper redisLockHelper, CacheKeyGenerator cacheKeyGenerator) {
+        this.redisLockHelper = redisLockHelper;
+        this.cacheKeyGenerator = cacheKeyGenerator;
+    }
+
+    @Around("execution(public * *(..)) && @annotation(com.example.annotation.CacheLock)")
     public Object interceptor(ProceedingJoinPoint pjp) {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
@@ -51,7 +58,7 @@ public class LockMethodInterceptor {
             }
         } finally {
             // TODO 如果演示的话需要注释该代码;实际应该放开
-            redisLockHelper.unlock(lockKey, value);
+            // redisLockHelper.unlock(lockKey, value);
         }
     }
 

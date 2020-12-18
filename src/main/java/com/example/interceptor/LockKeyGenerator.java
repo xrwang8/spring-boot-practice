@@ -1,10 +1,8 @@
-package com.example.servcie.impl;
+package com.example.interceptor;
 
-import com.example.aop.CacheLock;
-import com.example.aop.CacheParam;
-import com.example.servcie.CacheKeyGenerator;
+import com.example.annotation.CacheLock;
+import com.example.annotation.CacheParam;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -34,7 +32,6 @@ public class LockKeyGenerator implements CacheKeyGenerator {
         final Object[] args = proceedingJoinPoint.getArgs();
         final Parameter[] parameters = method.getParameters();
         StringBuilder builder = new StringBuilder();
-
         // TODO 默认解析方法里面带 CacheParam 注解的属性,如果没有尝试着解析实体对象中的
         for (int i = 0; i < parameters.length; i++) {
             final CacheParam annotation = parameters[i].getAnnotation(CacheParam.class);
@@ -43,7 +40,6 @@ public class LockKeyGenerator implements CacheKeyGenerator {
             }
             builder.append(lockAnnotation.delimiter()).append(args[i]);
         }
-
         if (StringUtils.isEmpty(builder.toString())) {
             final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             for (int i = 0; i < parameterAnnotations.length; i++) {

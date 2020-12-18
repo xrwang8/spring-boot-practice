@@ -1,4 +1,4 @@
-package com.example.servcie;
+package com.example.interceptor;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 

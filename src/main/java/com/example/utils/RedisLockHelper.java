@@ -1,4 +1,4 @@
-package com.example.config;
+package com.example.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
